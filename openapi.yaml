@@ -1,62 +1,145 @@
 openapi: 3.0.0
 info:
-  title: Sample API
-  description: This is a sample API definition using Swagger/OpenAPI.
+  title: E-commerce Product API
+  description: API for managing products and reviews in an e-commerce website
   version: 1.0.0
-servers:
-  - url: https://api.example.com/v1
+
 paths:
-  /users:
+  /products:
     get:
-      summary: Get a list of users
+      summary: Get a list of products
       responses:
         '200':
-          description: A list of users
+          description: A list of products
           content:
             application/json:
-              example:
-                - id: 1
-                  name: John Doe
-                - id: 2
-                  name: Jane Smith
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
     post:
-      summary: Create a new user
+      summary: Create a new product
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                name:
-                  type: string
+              $ref: '#/components/schemas/Product'
       responses:
         '201':
-          description: User created successfully
+          description: Product created successfully
           content:
             application/json:
-              example:
-                id: 3
-                name: New User
-  /users/{id}:
-    parameters:
-      - name: id
-        in: path
-        required: true
-        description: The ID of the user to retrieve
-        schema:
-          type: integer
-          format: int64
+              schema:
+                $ref: '#/components/schemas/Product'
+  /products/{productId}:
     get:
-      summary: Get a user by ID
+      summary: Get details of a specific product
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          description: The ID of the product to retrieve
+          schema:
+            type: integer
       responses:
         '200':
-          description: User details
+          description: Product details
           content:
             application/json:
-              example:
-                id: 1
-                name: John Doe
-    put:
-      summary: Update
+              schema:
+                $ref: '#/components/schemas/Product'
+  /products/{productId}/reviews:
+    get:
+      summary: Get product reviews
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          description: The ID of the product to retrieve reviews for
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Product reviews
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Review'
+    post:
+      summary: Add a new review for a product
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          description: The ID of the product to add the review to
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewReview'
+      responses:
+        '201':
+          description: Review added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
 
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        productId:
+          type: integer
+          description: The unique ID of the product
+        productName:
+          type: string
+          description: The name of the product
+        productImage:
+          type: string
+          format: uri
+          description: URL of the product image
+        price:
+          type: number
+          format: float
+          description: The price of the product
+        vendorId:
+          type: integer
+          description: The unique ID of the vendor
+        vendorName:
+          type: string
+          description: The name of the vendor
+    Review:
+      type: object
+      properties:
+        reviewId:
+          type: integer
+          description: The unique ID of the review
+        productId:
+          type: integer
+          description: The ID of the product being reviewed
+        rating:
+          type: integer
+          description: The rating given in the review (e.g., 1 to 5 stars)
+        comment:
+          type: string
+          description: The text comment provided in the review
+    NewReview:
+      type: object
+      properties:
+        productId:
+          type: integer
+          description: The ID of the product being reviewed
+        rating:
+          type: integer
+          description: The rating given in the review (e.g., 1 to 5 stars)
+        comment:
+          type: string
+          description: The text comment provided in the review
