@@ -1,1 +1,49 @@
+openapi: 3.0.0
+info:
+  title: E-commerce Category API
+  description: API for managing product categories in an e-commerce website
+  version: 1.0.0
+
+paths:
+  /categories:
+    get:
+      summary: Get a list of product categories
+      responses:
+        '200':
+          description: A list of product categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+  /categories/{categoryId}:
+    get:
+      summary: Get details of a specific product category
+      parameters:
+        - name: categoryId
+          in: path
+          required: true
+          description: The ID of the category to retrieve
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Product category details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+
+components:
+  schemas:
+    Category:
+      type: object
+      properties:
+        categoryId:
+          type: integer
+          description: The unique ID of the category
+        categoryName:
+          type: string
+          description: The name of the category
 
