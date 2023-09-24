@@ -1,48 +1,84 @@
 openapi: 3.0.0
 info:
-  title: E-commerce Category API
-  description: API for managing product categories in an e-commerce website
+  title: E-commerce Cart API
+  description: API for managing a shopping cart in an e-commerce website
   version: 1.0.0
 
 paths:
-  /categories:
+  /cart:
     get:
-      summary: Get a list of product categories
+      summary: Get the contents of the shopping cart
       responses:
         '200':
-          description: A list of product categories
+          description: The current contents of the cart
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Category'
-  /categories/{categoryId}:
-    get:
-      summary: Get details of a specific product category
-      parameters:
-        - name: categoryId
-          in: path
-          required: true
-          description: The ID of the category to retrieve
-          schema:
-            type: integer
+                  $ref: '#/components/schemas/CartItem'
+    post:
+      summary: Add a product to the shopping cart
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CartItem'
       responses:
-        '200':
-          description: Product category details
+        '201':
+          description: Product added to the cart successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Category'
+                $ref: '#/components/schemas/CartItem'
+  /cart/{productId}:
+    put:
+      summary: Update the quantity of a product in the cart
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          description: The ID of the product in the cart to update
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CartItem'
+      responses:
+        '200':
+          description: Product quantity updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartItem'
+    delete:
+      summary: Remove a product from the cart
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          description: The ID of the product in the cart to remove
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Product removed from the cart successfully
 
 components:
   schemas:
-    Category:
+    CartItem:
       type: object
       properties:
-        categoryId:
+        productId:
           type: integer
-          description: The unique ID of the category
-        categoryName:
+          description: The ID of the product
+        productName:
           type: string
-          description: The name of the category
+          description: The name of the product
+        quantity:
+          type: integer
+          description: The quantity of the product in the cart
